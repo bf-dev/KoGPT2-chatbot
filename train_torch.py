@@ -178,16 +178,16 @@ class KoGPT2Chat(LightningModule):
         return [optimizer], [lr_scheduler]
 
     def _collate_fn(self, batch):
-        data = [item[0] for item in batch]
-        mask = [item[1] for item in batch]
-        label = [item[2] for item in batch]
+        data = np.array([item[0] for item in batch])
+        mask = np.array([item[1] for item in batch])
+        label = np.array([item[2] for item in batch])
         return torch.LongTensor(data), torch.LongTensor(mask), torch.LongTensor(label)
 
     def train_dataloader(self):
         data = pd.read_csv('Chatbot_data/ChatbotData.csv')
         self.train_set = CharDataset(data, max_len=self.hparams.max_len)
         train_dataloader = DataLoader(
-            self.train_set, batch_size=self.hparams.batch_size, num_workers=2,
+            self.train_set, batch_size=self.hparams.batch_size, num_workers=6,
             shuffle=True, collate_fn=self._collate_fn)
         return train_dataloader
 
